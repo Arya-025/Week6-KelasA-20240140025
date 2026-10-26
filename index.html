@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Etalase Produk</title>
+  <meta name="description" content="Jelajahi katalog produk dari API dan tinggalkan ulasan.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="#top">Etalase</a>
+      <nav aria-label="Navigasi utama">
+        <a href="#produk">Produk</a>
+        <a href="#ulasan">Ulasan <span class="pill" id="nav-review-count">0</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container">
+        <h1>Temukan produk yang kamu cari, lalu ceritakan pengalamanmu.</h1>
+        <p class="hero-sub">Katalog ini memuat data langsung dari API. Cari produk, buka detailnya, dan tulis ulasan.</p>
+
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <label for="search" class="sr-only">Cari nama produk</label>
+          <input type="search" id="search" placeholder="Cari produk, misalnya laptop atau parfum" autocomplete="off" disabled>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUK (FETCH API) -->
+    <section class="section" id="produk" aria-labelledby="produk-title">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2 id="produk-title">Daftar produk</h2>
+            <p class="muted" id="result-info">Sedang menyiapkan katalog.</p>
+          </div>
+          <div class="sort">
+            <label for="sort">Urutkan</label>
+            <select id="sort" disabled>
+              <option value="default">Bawaan</option>
+              <option value="price-asc">Harga terendah</option>
+              <option value="price-desc">Harga tertinggi</option>
+              <option value="rating">Rating tertinggi</option>
+              <option value="name">Nama A sampai Z</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="chips" id="chips" role="group" aria-label="Filter kategori"></div>
+
+        <div id="state" class="state" role="status" aria-live="polite" hidden></div>
+        <div id="products" class="grid" aria-busy="true"></div>
+
+        <div class="more-wrap">
+          <button type="button" id="more-btn" class="btn btn-outline" hidden>Tampilkan lebih banyak</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ULASAN (FORM) -->
+    <section class="section section-alt" id="ulasan" aria-labelledby="ulasan-title">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2 id="ulasan-title">Tulis ulasan produk</h2>
+            <p class="muted">Bagikan pendapatmu supaya pembeli lain terbantu.</p>
+          </div>
+        </div>
+
+        <div class="review-layout">
+          <form id="review-form" class="card form-card" novalidate>
+            <div class="field">
+              <label for="name">Nama lengkap</label>
+              <input type="text" id="name" name="name" autocomplete="name" placeholder="Contoh: Rani Wulandari">
+              <p class="error-msg" id="name-error" aria-live="polite"></p>
+            </div>
+
+            <div class="field">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" autocomplete="email" placeholder="nama@email.com">
+              <p class="error-msg" id="email-error" aria-live="polite"></p>
+            </div>
+
+            <div class="field">
+              <label for="product">Produk yang diulas</label>
+              <select id="product" name="product" disabled>
+                <option value="">Menunggu data produk</option>
+              </select>
+              <p class="error-msg" id="product-error" aria-live="polite"></p>
+            </div>
+
+            <fieldset class="field" id="rating-field">
+              <legend>Rating</legend>
+              <div class="stars">
+                <input type="radio" name="rating" id="star5" value="5"><label for="star5" title="5 bintang"><span class="sr-only">5 bintang</span>★</label>
+                <input type="radio" name="rating" id="star4" value="4"><label for="star4" title="4 bintang"><span class="sr-only">4 bintang</span>★</label>
+                <input type="radio" name="rating" id="star3" value="3"><label for="star3" title="3 bintang"><span class="sr-only">3 bintang</span>★</label>
+                <input type="radio" name="rating" id="star2" value="2"><label for="star2" title="2 bintang"><span class="sr-only">2 bintang</span>★</label>
+                <input type="radio" name="rating" id="star1" value="1"><label for="star1" title="1 bintang"><span class="sr-only">1 bintang</span>★</label>
+              </div>
+              <p class="error-msg" id="rating-error" aria-live="polite"></p>
+            </fieldset>
+
+            <div class="field">
+              <label for="message">Ulasan</label>
+              <textarea id="message" name="message" maxlength="200" placeholder="Ceritakan kualitas, kemasan, atau pengalaman memakainya."></textarea>
+              <div class="field-foot">
+                <p class="error-msg" id="message-error" aria-live="polite"></p>
+                <span class="counter" id="counter">0 / 200</span>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Kirim ulasan</button>
+              <button type="button" class="btn btn-ghost" id="reset-btn">Kosongkan</button>
+            </div>
+          </form>
+
+          <aside class="reviews-panel" aria-labelledby="reviews-title">
+            <div class="reviews-head">
+              <h3 id="reviews-title">Ulasan masuk</h3>
+              <p class="summary" id="summary">Belum ada ulasan</p>
+            </div>
+            <ul id="reviews" class="reviews"></ul>
+            <p id="reviews-empty" class="empty-note">Ulasan yang kamu kirim akan muncul di sini.</p>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>Data produk dari <a href="https://dummyjson.com/products" target="_blank" rel="noopener">dummyjson.com</a>. Dibuat dengan HTML, CSS, dan JavaScript.</p>
+    </div>
+  </footer>
+
+  <!-- MODAL DETAIL -->
+  <dialog id="detail" aria-labelledby="detail-title">
+    <button type="button" class="dialog-close" id="detail-close" aria-label="Tutup detail">&times;</button>
+    <div class="detail-body" id="detail-body"></div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
